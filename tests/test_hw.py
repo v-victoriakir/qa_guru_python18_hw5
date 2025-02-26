@@ -19,7 +19,9 @@ def test_form_submitted():
         'option[value="1996"]'
     ).click()
     browser.element(".react-datepicker__day--010").click()
-    browser.element("#subjectsInput").type("Bio").press_enter()
+    browser.element('[id="subjectsInput"]').set_value("Bio").element(
+        '//*[contains(text(),"Biology")]'
+    ).click()
     browser.element('[for = "hobbies-checkbox-2"]').click()
     browser.element('[for = "hobbies-checkbox-3"]').click()
     browser.element("#uploadPicture").send_keys(
@@ -57,9 +59,9 @@ def test_form_required_fields_only():
     browser.open("/")
     browser.element("#firstName").set_value("Maria")
     browser.element("#lastName").set_value("Lopez")
-    browser.element("#gender-radio-2").click()
+    browser.element('[for = "gender-radio-2"]').click()
     browser.element("#userNumber").set_value("0123456789")
-    browser.element("#submit").click()
+    browser.element("#submit").perform(command.js.scroll_into_view).click()
 
     # проверки
     browser.element("#example-modal-sizes-title-lg").should(
@@ -71,7 +73,7 @@ def test_form_required_fields_only():
             "",
             "Female",
             "0123456789",
-            "24 February,2025",
+            "26 February,2025",
             "",
             "",
             "",
@@ -85,8 +87,7 @@ def test_form_required_fields_only():
 def test_form_error_required_fields_not_filled():
     browser.open("/")
     browser.element("#firstName").set_value("Maria")
-    browser.element("#gender-radio-2").click()
-    browser.element("#userNumber").set_value("0123456789")
+    browser.element('[for = "gender-radio-2"]').click()
     browser.element("#submit").click()
 
     # проверки
@@ -98,9 +99,9 @@ def test_form_required_fields_but_wrong_number():
     browser.open("/")
     browser.element("#firstName").set_value("Maria")
     browser.element("#lastName").set_value("Lopez")
-    browser.element("#gender-radio-2").click()
+    browser.element('[for = "gender-radio-2"]').click()
     browser.element("#userNumber").set_value("123456789")
-    browser.element("#submit").click()
+    browser.element("#submit").perform(command.js.scroll_into_view).click()
 
     # проверки
     browser.element("#userForm").should(have.attribute("class").value("was-validated"))
