@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from selene import browser
 from selenium import webdriver
@@ -13,12 +15,18 @@ def browser_config():
     browser.config.window_width = 1400
 
     browser.config.base_url = "https://demoqa.com/automation-practice-form"
-    driver_options = webdriver.ChromeOptions()
-    driver_options.add_argument("--headless")
-    browser.config.driver_options = driver_options
+    # driver_options = webdriver.ChromeOptions()
+    # driver_options.add_argument("--headless")
+    # browser.config.driver_options = driver_options
 
     browser.config.type_by_js = True
 
     yield
 
     browser.quit()
+
+
+@pytest.fixture(scope="function")
+def today_date():
+    c = datetime.now()
+    current_time = c.strftime("%d %B, %Y")

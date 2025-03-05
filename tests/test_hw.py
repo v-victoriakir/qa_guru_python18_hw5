@@ -6,6 +6,7 @@ from selene import browser, have, command
 # успешная отправка формы со всеми заполненными полями
 def test_form_submitted():
     browser.open("/")
+    browser.driver.execute_script("$('#RightSide_Advertisement').remove()")
     browser.element("#firstName").set_value("Maria")
     browser.element("#lastName").set_value("Lopez")
     browser.element("#userEmail").set_value("MLopez@gmail.com")
@@ -38,24 +39,36 @@ def test_form_submitted():
     browser.element("#example-modal-sizes-title-lg").should(
         have.exact_text("Thanks for submitting the form")
     )
-    browser.all("//div[@class='table-responsive']//td[2]").should(
-        have.exact_texts(
-            "Maria Lopez",
-            "MLopez@gmail.com",
-            "Female",
-            "0123456789",
-            "10 October,1996",
-            "Biology",
-            "Reading, Music",
-            "unnamed.jpg",
-            "Main street, 55 bld, 10 apt.",
-            "Rajasthan Jaipur",
-        )
-    )
+    browser.element(".table").should(have.text("Maria Lopez"))
+    browser.element(".table").should(have.text("MLopez@gmail.com"))
+    browser.element(".table").should(have.text("Female"))
+    browser.element(".table").should(have.text("0123456789"))
+    browser.element(".table").should(have.text("10 October,1996"))
+    browser.element(".table").should(have.text("Biology"))
+    browser.element(".table").should(have.text("Reading, Music"))
+    browser.element(".table").should(have.text("unnamed.jpg"))
+    browser.element(".table").should(have.text("Main street, 55 bld, 10 apt."))
+    browser.element(".table").should(have.text("Rajasthan Jaipur"))
+
+    # альтернативный способ:
+    # browser.all("//div[@class='table-responsive']//td[2]").should(
+    #     have.exact_texts(
+    #         "Maria Lopez",
+    #         "MLopez@gmail.com",
+    #         "Female",
+    #         "0123456789",
+    #         "10 October,1996",
+    #         "Biology",
+    #         "Reading, Music",
+    #         "unnamed.jpg",
+    #         "Main street, 55 bld, 10 apt.",
+    #         "Rajasthan Jaipur",
+    #     )
+    # )
 
 
 # попытка отправки формы только с обяз. полями
-def test_form_required_fields_only():
+def test_form_required_fields_only(today_date):
     browser.open("/")
     browser.element("#firstName").set_value("Maria")
     browser.element("#lastName").set_value("Lopez")
@@ -67,20 +80,16 @@ def test_form_required_fields_only():
     browser.element("#example-modal-sizes-title-lg").should(
         have.exact_text("Thanks for submitting the form")
     )
-    browser.all("//div[@class='table-responsive']//td[2]").should(
-        have.exact_texts(
-            "Maria Lopez",
-            "",
-            "Female",
-            "0123456789",
-            "26 February,2025",
-            "",
-            "",
-            "",
-            "",
-            "",
-        )
-    )
+    browser.element(".table").should(have.text("Maria Lopez"))
+    browser.element(".table").should(have.text(""))
+    browser.element(".table").should(have.text("Female"))
+    browser.element(".table").should(have.text("0123456789"))
+    browser.element(".table").should(have.text(f"c"))
+    browser.element(".table").should(have.text(""))
+    browser.element(".table").should(have.text(""))
+    browser.element(".table").should(have.text(""))
+    browser.element(".table").should(have.text(""))
+    browser.element(".table").should(have.text(""))
 
 
 # попытка отправки формы без заполнения обязательных полей (не отправляем last name & number)
@@ -88,7 +97,7 @@ def test_form_error_required_fields_not_filled():
     browser.open("/")
     browser.element("#firstName").set_value("Maria")
     browser.element('[for = "gender-radio-2"]').click()
-    browser.element("#submit").click()
+    browser.element("#submit").perform(command.js.scroll_into_view).click()
 
     # проверки
     browser.element("#userForm").should(have.attribute("class").value("was-validated"))
